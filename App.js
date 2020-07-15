@@ -1,9 +1,32 @@
 import React, { useRef } from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, PermissionsAndroid, Platform } from 'react-native'
+import CameraRoll from "@react-native-community/cameraroll";
 import Swiper from 'react-native-deck-swiper'
 import { photoCards } from './constants'
 import { Card, IconButton, OverlayLabel } from './components'
 import styles from './App.styles'
+
+
+async function hasAndroidPermission() {
+  const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
+
+  const hasPermission = await PermissionsAndroid.check(permission);
+  if (hasPermission) {
+    return true;
+  }
+
+  const status = await PermissionsAndroid.request(permission);
+  return status === 'granted';
+}
+
+async function savePicture() {
+  if (Platform.OS === "android" && !(await hasAndroidPermission())) {
+    return;
+  }
+
+  CameraRoll.saveToCameraRoll(tag, [type]);
+};
+
 
 const App = () => {
   const useSwiper = useRef(null).current
